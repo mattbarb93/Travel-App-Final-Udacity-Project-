@@ -10,21 +10,73 @@
 </head>
 
 <body>
-    <h2>Zip Code</h2>
-    <div class="holder zip">
+    <h2>CITY</h2>
+    <div class="holder city">
         <label for="city">Enter City here</label>
         <input type="text" id="city" placeholder="enter city here">
     </div>
-    <div class="holder feel">
-        <label for="feelings">How are you feeling today?</label>
-        <textarea class="myInput" id="feelings" placeholder="Enter your feelings here" rows="9" cols="50"></textarea>
+
+    <!-- 
+ <div class="holder countdown">
+        <label for="trip-day">Enter the day of your trip</label>
+        <input type="number" class="myInput" id="date" placeholder="Enter date here" ></input>
+        <label for="trip-month">Enter the month of your trip</label>
+        <input type="text" class="myInput" id="date" placeholder="Enter date here" ></input>
+        <label for="trip-year">Enter the year of your trip</label>
+        <input type="year" class="myInput" id="date" placeholder="Enter year here" ></input>
     </div>
-    <button id="generate" type="submit"> Generate </button>
-    <label for="user-feelings">USER INFO</label>
+    -->
+
+
+    <form>
+        <label class="nativeDatePicker">Enter the day of the trip:
+            <input type="date" id="trip-date" name="trip-date">
+            <span class="validity"></span>
+        </label>
+
+        <fieldset class="fallbackDatePicker" hidden>
+            <legend class="fallbackLabel">Enter your trip date:</legend>
+
+            <label>
+                Day:
+                <select name="day"></select>
+            </label>
+
+            <label>
+                Month:
+                <select name="month">
+                    <option>January</option>
+                    <option>February</option>
+                    <option>March</option>
+                    <option>April</option>
+                    <option>May</option>
+                    <option>June</option>
+                    <option>July</option>
+                    <option>August</option>
+                    <option>September</option>
+                    <option>October</option>
+                    <option>November</option>
+                    <option>December</option>
+                </select>
+            </label>
+
+            <label>
+                Year:
+                <select name="year"></select>
+            </label>
+        </fieldset>
+    </form>
+
+    <button id="generate" type="submit"> Submit </button>
     <div id="entryHolder">
-        <h3>Latitude: <div id="latitude"></div></h3>
-        <h3>Longitude: </h3><div id="longitude"></div>
-        <h3>Country: </h3><div id="country"></div>
+        <H3>Days before the trip: </H3>
+        <div id="daysBeforeTrip"></div>
+        <h3>Projected Weather in <div id="city"></div>, <div id="country"></div> </h3>
+        
+        <h3>Minimum Temperature </h3>
+        <div id="min-temp"></div>
+        <h3>Maximum Temperature </h3>
+        <div id="max-temp"></div>
         <script src="app.js" type="text/javascript"></script>
 </body>
 

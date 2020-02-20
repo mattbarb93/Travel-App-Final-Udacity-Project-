@@ -35,6 +35,7 @@ function listening() {
 const projectData = {};
 const path = require('path')
 const express = require('express')
+const request = require('request');
 const dotenv = require('dotenv');
 const cors = require("cors");
 var bodyParser = require('body-parser')
@@ -48,10 +49,32 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+
+/*
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
+app.get('/', (req, res) => {
+  request(
+    { url: 'https://api.darksky.net/forecast/' },
+    (error, response, body) => {
+      if (error || response.statusCode !== 200) {
+        return res.status(500).json({ type: 'error', message: error.message });
+      }
+
+      res.json(JSON.parse(body));
+    }
+  )
+});
+*/
+
 app.use(express.static('dist'))
 app.listen(8081, function () {
   console.log('Example app listening on port 8081!')
 })
+
 
 // Initialize all route with a callback function
 app.get('/', callBack)
@@ -78,7 +101,29 @@ app.post('/getUserEntry', function (req, res) {
     latitude: data.latitude,
     longitude: data.longitude,
     country: data.country,
-    comingFrom: "Coming from app.post"
+    comingFrom: "Coming from app.post",
+    temperatureHigh: data.temperatureHigh,
+    temperatureLow: data.temperatureLow
+  }
+
+  console.log(newEntry)
+  
+  userData.push(newEntry)
+  res.send(userData)
+  /*
+  projectData["zip"] = data.zip;
+  projectData["date"] = data.date;
+  projectData["feelings"] = data.feelings;
+  console.log(projectData)
+  */
+
+})
+
+app.post('/getTemperature', function (req, res) {
+  let data = req.body;
+  newEntry = {
+    temperatureHigh: data.temperatureHigh,
+    temperatureLow: data.temperatureLow
   }
 
   console.log(newEntry)

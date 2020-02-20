@@ -6,6 +6,8 @@ let username = "&username=mattbarb93";
 let forecastBaseURL = "https://api.darksky.net/forecast/";
 let forecastAPI = "8f21f6a879c526bedb3e07e5146399cf";
 
+//CORS Anywhere - Use it to bypass the CORS error
+let corsAnywhere = "https://cors-anywhere.herokuapp.com/"
 
 // Event listener to add function to existing HTML DOM element
 document.getElementById('generate').addEventListener('click', performAction);
@@ -14,12 +16,36 @@ document.getElementById('generate').addEventListener('click', performAction);
 
 function performAction(e) {
   let city = document.getElementById('city').value;
+
+  //Get the current date, get the trip date from the user, calculate the difference between dates using the formula
+
+  const currentDate = new Date(),
+    tripDate = new Date(document.getElementById('trip-date').value),
+    difference = dateDiffInDays(currentDate, tripDate);
+
+  //Using this to add it to the Dark Sky API, and get the API call to check the future temperature
+  let tripDateUNIX = Math.round(tripDate.getTime() / 1000)  ;
+
+  console.log(tripDateUNIX)
+
+
+
+  console.log("Days until trip: " + difference)
+
+  
   getLatitudeInfo(geonamesBaseURL, city, username)
 
     .then(function (data) {
-      postData('/getUserEntry', { latitude: data.lat, longitude: data.lng, country: data.countryCode, comingFrom: "postDATA" })
+      getForecastInfo(corsAnywhere,forecastBaseURL, forecastAPI, data.lat, data.lng, tripDateUNIX)
+      .then(function(weatherData) {
+        console.log(weatherData)
+        postData('/getUserEntry', { temperatureHigh: weatherData.daily.data[0].temperatureHigh, temperatureLow: weatherData.daily.data[0].temperatureLow, latitude: data.lat, longitude: data.lng, country: data.countryCode, comingFrom: "postDATA"})
 
-      updateUI()
+        updateUI()
+      })
+      
+
+      
     }
 
     )
@@ -30,8 +56,17 @@ const getLatitudeInfo = async (geonamesBaseURL, city, username) => {
   const res = await fetch(geonamesBaseURL + city + username)
   try {
     const data = await res.json();
-    console.log(data.postalCodes[0]);
     return data.postalCodes[0];
+  } catch (error) {
+    console.log("error", error);
+  }
+}
+
+const getForecastInfo = async (corsAnywhere,forecastBaseURL,forecastAPI, lat, lng, tripDateUNIX ) => {
+  const res = await fetch(corsAnywhere + forecastBaseURL + forecastAPI + "/" + lat + "," + lng + "," + tripDateUNIX)
+  try {
+    const data = await res.json();
+    return data;
   } catch (error) {
     console.log("error", error);
   }
@@ -62,23 +97,44 @@ const updateUI = async () => {
   const request = await fetch('/all');
   try {
     const allData = await request.json();
+    console.log(allData)
 
-    if (document.getElementById('latitude').innerHTML === undefined) {
+    /*WORK ON IT LATER: INPUT VALIDATION
+    if (allData[allData.length - 1].latitude = undefined) {
       alert("No cities were found! Please try again!")
     }
     else {
-      document.getElementById('latitude').innerHTML = allData[allData.length - 1].latitude;
-      document.getElementById('longitude').innerHTML = allData[allData.length - 1].longitude;
-      document.getElementById('country').innerHTML = allData[allData.length - 1].country;
+
     }
+    */
+      document.getElementById('min-temp').innerHTML = allData[allData.length - 1].temperatureLow;
+      document.getElementById('max-temp').innerHTML = allData[allData.length - 1].temperatureHigh;
+      document.getElementById('country').innerHTML = allData[allData.length - 1].country;
+
 
 
   } catch (error) {
     console.log("error", error);
   }
 }
+
+
+//CALCULATING DIFFERENCE BETWEEN CURRENT DATE AND TRIP DATE
+const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+// a and b are javascript Date objects
+function dateDiffInDays(a, b) {
+  // Discard the time and time-zone information.
+  const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+  return Math.floor((utc2 - utc1) / _MS_PER_DAY) + 1;
+}
+
+
 /* Function to GET Project Data */
 
 export { getLatitudeInfo }
+export { getForecastInfo }
 export { postData }
 export { updateUI }
