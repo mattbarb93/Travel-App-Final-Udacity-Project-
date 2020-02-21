@@ -103,7 +103,10 @@ app.post('/getUserEntry', function (req, res) {
     country: data.country,
     comingFrom: "Coming from app.post",
     temperatureHigh: data.temperatureHigh,
-    temperatureLow: data.temperatureLow
+    temperatureLow: data.temperatureLow,
+    city: data.city,
+    daysBeforeTrip: data.daysBeforeTrip,
+    image: data.image
   }
 
   console.log(newEntry)

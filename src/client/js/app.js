@@ -9,6 +9,10 @@ let forecastAPI = "8f21f6a879c526bedb3e07e5146399cf";
 //CORS Anywhere - Use it to bypass the CORS error
 let corsAnywhere = "https://cors-anywhere.herokuapp.com/"
 
+//Pixabay API
+let pictureBaseURL = "https://pixabay.com/api/"
+let pictureAPI = "15337138-4b8bccea66ade28d93ec8857b"
+
 // Event listener to add function to existing HTML DOM element
 document.getElementById('generate').addEventListener('click', performAction);
 
@@ -24,7 +28,7 @@ function performAction(e) {
     difference = dateDiffInDays(currentDate, tripDate);
 
   //Using this to add it to the Dark Sky API, and get the API call to check the future temperature
-  let tripDateUNIX = Math.round(tripDate.getTime() / 1000)  ;
+  let tripDateUNIX = Math.round(tripDate.getTime() / 1000);
 
   console.log(tripDateUNIX)
 
@@ -32,20 +36,39 @@ function performAction(e) {
 
   console.log("Days until trip: " + difference)
 
-  
+
   getLatitudeInfo(geonamesBaseURL, city, username)
 
     .then(function (data) {
-      getForecastInfo(corsAnywhere,forecastBaseURL, forecastAPI, data.lat, data.lng, tripDateUNIX)
-      .then(function(weatherData) {
-        console.log(weatherData)
-        postData('/getUserEntry', { temperatureHigh: weatherData.daily.data[0].temperatureHigh, temperatureLow: weatherData.daily.data[0].temperatureLow, latitude: data.lat, longitude: data.lng, country: data.countryCode, comingFrom: "postDATA"})
+      getForecastInfo(corsAnywhere, forecastBaseURL, forecastAPI, data.lat, data.lng, tripDateUNIX)
+        .then(function (weatherData) {
+          console.log(weatherData)
+          getPictureInfo(pictureBaseURL, pictureAPI, city)
+            .then(function (picture) {
+              console.log(picture);
+              postData('/getUserEntry', {
+                temperatureHigh: weatherData.daily.data[0].temperatureHigh,
+                temperatureLow: weatherData.daily.data[0].temperatureLow,
+                latitude: data.lat,
+                longitude: data.lng,
+                country: data.countryCode,
+                comingFrom: "postDATA",
+                city: data.placeName,
+                daysBeforeTrip: difference,
+                image: picture.hits[0].webformatURL
 
-        updateUI()
-      })
-      
+              })
 
-      
+              updateUI()
+            })
+
+
+
+
+        })
+
+
+
     }
 
     )
@@ -56,14 +79,25 @@ const getLatitudeInfo = async (geonamesBaseURL, city, username) => {
   const res = await fetch(geonamesBaseURL + city + username)
   try {
     const data = await res.json();
+    console.log(data);
     return data.postalCodes[0];
   } catch (error) {
     console.log("error", error);
   }
 }
 
-const getForecastInfo = async (corsAnywhere,forecastBaseURL,forecastAPI, lat, lng, tripDateUNIX ) => {
+const getForecastInfo = async (corsAnywhere, forecastBaseURL, forecastAPI, lat, lng, tripDateUNIX) => {
   const res = await fetch(corsAnywhere + forecastBaseURL + forecastAPI + "/" + lat + "," + lng + "," + tripDateUNIX)
+  try {
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log("error", error);
+  }
+}
+
+const getPictureInfo = async (pictureBaseURL, pictureAPI, city) => {
+  const res = await fetch(pictureBaseURL + "?key=" + pictureAPI + "&q=" + city + "&image_type=photo")
   try {
     const data = await res.json();
     return data;
@@ -97,7 +131,7 @@ const updateUI = async () => {
   const request = await fetch('/all');
   try {
     const allData = await request.json();
-    console.log(allData)
+    console.log("this is allData: " + allData)
 
     /*WORK ON IT LATER: INPUT VALIDATION
     if (allData[allData.length - 1].latitude = undefined) {
@@ -107,9 +141,12 @@ const updateUI = async () => {
 
     }
     */
-      document.getElementById('min-temp').innerHTML = allData[allData.length - 1].temperatureLow;
-      document.getElementById('max-temp').innerHTML = allData[allData.length - 1].temperatureHigh;
-      document.getElementById('country').innerHTML = allData[allData.length - 1].country;
+    document.getElementById('min-temp').innerHTML = allData[allData.length - 1].temperatureLow;
+    document.getElementById('max-temp').innerHTML = allData[allData.length - 1].temperatureHigh;
+    document.getElementById('country').innerHTML = allData[allData.length - 1].country;
+    document.getElementById('daysBeforeTrip').innerHTML = allData[allData.length - 1].daysBeforeTrip;
+    document.getElementById('picture').src = allData[allData.length - 1].image;
+    document.getElementById('city-trip').innerHTML = allData[allData.length - 1].city;
 
 
 
