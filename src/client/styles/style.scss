@@ -1,3 +1,59 @@
+$color-white: white;
+$font-family: lato;
+
 body{
     background-color: lightblue;
+    font-family: $font-family;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+h2{
+    font-size: 2em;
+    
+    color: red; //test
+}
+
+h3{
+    font-size: 1.6em;
+    color: green; //test
+}
+
+button{
+    font-family: inherit;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: $color-white;
+    cursor: pointer;
+    font-size: inherit;
+    text-decoration: none !important;
+    background-color: transparent;
+
+    a{
+        text-decoration: none;
+        color: $color-white;
+    }
+}
+
+.btn{
+    background-color: lightpink;
+    color: $color-white;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 1rem 4rem;
+    display: inline-block;
+    border-radius: 10rem;
+    transition: all .2s;
+    position: relative;
+    &:hover{
+        background-color: darkmagenta;
+    }
+
+    &:active{
+        background-color: $color-white;
+        color: pink;
+    }
 }
