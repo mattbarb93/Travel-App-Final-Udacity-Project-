@@ -100,17 +100,6 @@ const getPictureInfo = async (pictureBaseURL, pictureAPI, city) => {
   const res = await fetch(pictureBaseURL + "?key=" + pictureAPI + "&q=" + city + "&image_type=photo")
   try {
     const data = await res.json();
-    if (data.total === 0) {
-      console.log("it's empty. run a query of an airplane");
-      const res = await fetch(pictureBaseURL + "?key=" + pictureAPI + "&q=airplane" + "&image_type=photo")
-      try {
-        const data = await res.json();
-        return data;
-      } catch (error) {
-        console.log("error", error)
-      }
-
-    }
     return data;
   } catch (error) {
     console.log("error", error);
@@ -156,15 +145,8 @@ const updateUI = async () => {
     document.getElementById('max-temp').innerHTML = allData[allData.length - 1].temperatureHigh;
     document.getElementById('country').innerHTML = allData[allData.length - 1].country;
     document.getElementById('daysBeforeTrip').innerHTML = allData[allData.length - 1].daysBeforeTrip;
-
+    document.getElementById('picture').src = allData[allData.length - 1].image;
     document.getElementById('city-trip').innerHTML = allData[allData.length - 1].city;
-
-    if (allData[allData.length - 1].image === undefined) {
-      document.getElementById('picture').src = "https://pixabay.com/get/5ee4d4474e53b108f5d084609629327d1638dfe65b4c704c7d2d79d2924dcd5b_640.jpg";
-    }
-    else {
-      document.getElementById('picture').src = allData[allData.length - 1].image
-    }
 
 
 
