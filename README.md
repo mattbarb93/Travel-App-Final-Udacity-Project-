@@ -23,7 +23,7 @@ For this project, we intend to have the user enter a city of their choice, follo
 
 This was the first time I had to integrate multiple APIs, and pass many calls into a single object which eventually were used to display desired information back to the user. 
 
-##What struggles have I faced?
+## What struggles have I faced?
 
 As mentioned before, the multiple API calls were a challenge at first, but once the first two were made, I had a clear vision on how to call more than one. Another challenge was to display the number of days remaining before the trip, which I achieved by making some javascript logic with the Date() function.
 
