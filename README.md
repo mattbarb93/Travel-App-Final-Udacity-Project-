@@ -1,9 +1,9 @@
 ## To open the project
 
 Run the following commands:
-npm install
-npm run build-prod
-npm start
+- npm install
+- npm run build-prod
+- npm start
 
 ## Languages used
 
