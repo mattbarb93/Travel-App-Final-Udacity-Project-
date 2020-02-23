@@ -14,8 +14,9 @@ let pictureBaseURL = "https://pixabay.com/api/"
 let pictureAPI = "15337138-4b8bccea66ade28d93ec8857b"
 
 // Event listener to add function to existing HTML DOM element
-document.getElementById('generate').addEventListener('click', performAction);
-
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('generate').addEventListener('click', performAction);
+});
 /* Function called by event listener */
 
 function performAction(e) {
